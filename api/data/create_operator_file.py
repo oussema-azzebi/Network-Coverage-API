@@ -14,7 +14,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 file_path = "./2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv"
-output_file_path = 'operators.csv'
+output_file_path = 'operator.csv'
 
 base_url_reverse_csv = "https://api-adresse.data.gouv.fr/reverse/csv/"
 
