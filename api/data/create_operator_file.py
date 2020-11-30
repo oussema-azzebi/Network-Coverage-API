@@ -20,16 +20,19 @@ base_url_reverse_csv = "https://api-adresse.data.gouv.fr/reverse/csv/"
 lambert = pyproj.Proj('+proj=lcc +lat_1=49 +lat_2=44 +lat_0=46.5 +lon_0=3 +x_0=700000 +y_0=6600000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
 wgs84 = pyproj.Proj('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
 
-#Fix the number of dataframe chunk
+#fix the number of dataframe chunk
 split_number = 8
 
-#Compute the latitude and the longitude
-def get_lat_long(X, Y):
-  lon, lat = pyproj.transform(lambert, wgs84, X, Y)
-  return lon, lat
 
-#get the name of the city from the response returned by reverse API
+def get_lat_long(X, Y):
+    """return latitude and longitude"""
+
+    lon, lat = pyproj.transform(lambert, wgs84, X, Y)
+    return lon, lat
+
 def get_city(response_splitter, all_city):
+    """return value of city from the response returned by reverse API"""
+
     for index, element in enumerate(response_splitter):
         if 0 == index:
             continue
@@ -39,6 +42,8 @@ def get_city(response_splitter, all_city):
     return all_city
 
 def process_file(input_file, output_file, df_chunk_file):
+    """return 1 if output file is generated, otherwise None"""
+
     logger.info("Start process File...")     
     try:
         df = pd.read_csv(input_file, sep = ';')

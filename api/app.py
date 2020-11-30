@@ -26,6 +26,8 @@ operators_id = {"20801": "Orange",
 			} 
 
 def get_operators(city):
+	"""return a dictionary with the eligibility of each operator"""
+
 	result = {}
 	df = pd.read_csv(output_file, sep = ';')
 
@@ -47,6 +49,8 @@ def get_operators(city):
 		return result
 
 def check_file_location(file_path):
+	"""return True if the file exists, otherwise False"""
+
 	p = pathlib.Path(file_path)
 	if p.is_file():
 		#if file exist but empty, remove it and call again start method
@@ -59,7 +63,8 @@ def check_file_location(file_path):
 		return False
 
 def start():
-	"""Start method is called before flask application is started but strictly before the first request"""
+	"""Start method is called only when starting the server"""
+
 	if check_file_location(output_file):
 		pass 
 	else:
@@ -67,12 +72,16 @@ def start():
 		if result != 1:
 			raise ("Error ! Cannot generate file")
 
+
 @app.route("/operator/", methods=["GET"])
 def listing_operators():
-	adress = request.args.get('adress')
-	if 0 == len(adress):
-		msg = "No address has been entered..."
-		return jsonify(message = msg)
+	try:
+		adress = request.args.get('adress')
+		if 0 == len(adress):
+			msg = "No address has been entered..."
+			return jsonify(message = msg)
+	except Exception:
+		abort(400, description="Bad request")
 
 	#get response from API search
 	response = requests.get(base_url_api_search + '?q=' + adress)
