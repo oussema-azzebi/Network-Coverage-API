@@ -4,6 +4,7 @@ import sys
 import logging
 import pandas as pd
 import numpy as np
+import os
 
 
 logger = logging.getLogger(__file__)
@@ -13,8 +14,7 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-file_path = "./2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv"
-output_file_path = 'operator.csv'
+output_file_path = os.getcwd() + 'operator.csv'
 
 base_url_reverse_csv = "https://api-adresse.data.gouv.fr/reverse/csv/"
 
@@ -75,7 +75,7 @@ def process_file(file_path):
         logger.info("Dataframe number : {} ".format(i))
         
         #save the chunk dataframe file (who will be sent to the API)
-        chunk.to_csv('dataframe.csv', sep=',', encoding='utf-8', index = False)
+        chunk.to_csv(os.getcwd() + 'dataframe.csv', sep=',', encoding='utf-8', index = False)
         
         files = {'data': open('dataframe.csv', 'rb')}        
         try:
@@ -94,7 +94,7 @@ def process_file(file_path):
             all_city = get_city(response_splitter, all_city)
         
     df['city'] = all_city
-    df.to_csv(output_file_path, sep=',', encoding='utf-8', index = False)
+    df.to_csv(output_file_path, sep=';', encoding='utf-8', index = False)
     logger.info("End process file. The Output file is generated !")    
     return 1
 

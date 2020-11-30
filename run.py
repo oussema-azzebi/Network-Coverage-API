@@ -1,4 +1,5 @@
-from api.operator_eligibility import app
+from api.app import app, start
 
 if __name__ == "__main__":
-        app.run(debug=True)
+	start()
+	app.run(debug=True)
