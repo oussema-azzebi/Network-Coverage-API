@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, abort
-from werkzeug.exceptions import BadRequest, NotFound
 from api.data.create_operator_file import process_file
 import pathlib
 import os
@@ -16,16 +15,19 @@ app.config.from_object('config')
 
 base_url_api_search = "https://api-adresse.data.gouv.fr/search/"
 
+input_file = os.getcwd() + "/api/data/2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv"
+output_file = os.getcwd() + "/api/data/operator.csv"
+df_chunk_file = os.getcwd() + "/api/data/dataframe.csv"
+
 operators_id = {"20801": "Orange",
-			"20810": "SFR",
-			"20815": "Free",
-			"20820": "Bouygue"        
-		} 
+				"20810": "SFR",
+				"20815": "Free",
+				"20820": "Bouygue"        
+			} 
 
-def get_operators(city, operators_id):
+def get_operators(city):
 	result = {}
-
-	df = pd.read_csv(os.getcwd() + "/api/data/operator.csv", sep = ',')
+	df = pd.read_csv(output_file, sep = ';')
 
 	#filter by city
 	df = df.loc[df['city'] == city]
@@ -47,16 +49,21 @@ def get_operators(city, operators_id):
 def check_file_location(file_path):
 	p = pathlib.Path(file_path)
 	if p.is_file():
-		return True
+		#if file exist but empty, remove it and call again start method
+		if os.stat(file_path).st_size == 0:
+			os.remove(file_path)
+			start()
+		else:	
+			return True
 	else:
 		return False
 
 def start():
 	"""Start method is called before flask application is started but strictly before the first request"""
-	if check_file_location(os.getcwd() + "/api/data/operator.csv"):
+	if check_file_location(output_file):
 		pass 
 	else:
-		result = process_file(os.getcwd() + "/api/data/2018_01_Sites_mobiles_2G_3G_4G_France_metropolitaine_L93.csv")
+		result = process_file(input_file, output_file, df_chunk_file)
 		if result != 1:
 			raise ("Error ! Cannot generate file")
 
@@ -89,5 +96,5 @@ def listing_operators():
 		msg = "Several cities have been found. Please specify your address !"
 		return jsonify(message = msg)
 
-	result = get_operators(cities[0], operators_id)
+	result = get_operators(cities[0])
 	return jsonify(result)

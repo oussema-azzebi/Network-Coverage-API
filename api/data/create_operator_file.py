@@ -14,8 +14,6 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-output_file_path = os.getcwd() + 'operator.csv'
-
 base_url_reverse_csv = "https://api-adresse.data.gouv.fr/reverse/csv/"
 
 #compute lambert and wgs84
@@ -26,7 +24,7 @@ wgs84 = pyproj.Proj('+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
 split_number = 8
 
 #Compute the latitude and the longitude
-def get_lat_long(X, Y, lambert, wgs84):
+def get_lat_long(X, Y):
   lon, lat = pyproj.transform(lambert, wgs84, X, Y)
   return lon, lat
 
@@ -40,15 +38,15 @@ def get_city(response_splitter, all_city):
         
     return all_city
 
-def process_file(file_path):
+def process_file(input_file, output_file, df_chunk_file):
     logger.info("Start process File...")     
     try:
-        df = pd.read_csv(file_path, sep = ';')
+        df = pd.read_csv(input_file, sep = ';')
     except FileNotFoundError:
-        logger.error("File {} does not exist".format(file_path))
+        logger.error("File {} does not exist".format(input_file))
         return
     except:
-        logger.error("Error while reading {}".format(file_path))
+        logger.error("Error while reading {}".format(input_file))
         return
     
     #remove lines with None value
@@ -58,7 +56,7 @@ def process_file(file_path):
     lon_list = []
     lat_list = []
     for value_x, value_y in zip(df['X'], df['Y']):
-        lon, lat = get_lat_long(value_x, value_y, lambert, wgs84)
+        lon, lat = get_lat_long(value_x, value_y)
         lon_list.append(round(lon, 3))
         lat_list.append(round(lat, 3))
      
@@ -75,9 +73,14 @@ def process_file(file_path):
         logger.info("Dataframe number : {} ".format(i))
         
         #save the chunk dataframe file (who will be sent to the API)
-        chunk.to_csv(os.getcwd() + 'dataframe.csv', sep=',', encoding='utf-8', index = False)
-        
-        files = {'data': open('dataframe.csv', 'rb')}        
+        chunk.to_csv(df_chunk_file, sep=',', encoding='utf-8', index = False)       
+
+        try:
+            files = {'data': open(df_chunk_file, 'rb')} 
+        except FileNotFoundError:
+            logger.error("Error while opening {}".format(df_chunk_file))
+            return
+
         try:
             response = requests.post(base_url_reverse_csv, files=files)
         except:
@@ -94,7 +97,7 @@ def process_file(file_path):
             all_city = get_city(response_splitter, all_city)
         
     df['city'] = all_city
-    df.to_csv(output_file_path, sep=';', encoding='utf-8', index = False)
+    df.to_csv(output_file, sep=';', encoding='utf-8', index = False)
     logger.info("End process file. The Output file is generated !")    
     return 1
 
