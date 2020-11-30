@@ -6,16 +6,16 @@
 
 - Create virtual env:
 
- 	virtualenv env -p python3
-	source env/bin/activate
+		virtualenv env -p python3
+		source env/bin/activate
 
 - Install dependencies
 
-        pip3 install -r requirements.txt
+		pip3 install -r requirements.txt
 
 - Run the server
 
-	python3 run.py
+		python3 run.py
 
 - An example of using the API :
 
