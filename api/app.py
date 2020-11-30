@@ -63,9 +63,10 @@ def start():
 @app.route("/operator/", methods=["GET"])
 def listing_operators():
 	adress = request.args.get('adress')
-	#if adress is None:
-	#	abort(400)
-
+	if 0 == len(adress):
+		msg = "No address has been entered..."
+		return jsonify(message = msg)
+		
 	#get response from API search
 	response = requests.get(base_url_api_search + '?q=' + adress)
 
