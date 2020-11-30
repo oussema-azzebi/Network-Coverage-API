@@ -37,10 +37,10 @@ def get_operators(city, operators_id):
 		for index in df.index:
 			operateur = df['Operateur'][index]
 			operateur_name = operators_id[str(operateur)]
-			two_G = df['2G'][index]
-			tree_G = df['3G'][index]
-			four_G = df['4G'][index]
-			result[operateur_name] = {"2G": int(two_G), "3G": int(tree_G), "4G": int(four_G)}
+			two_G = 'True' if df['2G'][index] == 1 else 'False'
+			tree_G = 'True' if df['3G'][index] == 1 else 'False'
+			four_G = 'True' if df['4G'][index] == 1 else 'False'
+			result[operateur_name] = {"2G": two_G, "3G": tree_G, "4G": four_G}
 
 		return result
 
@@ -66,7 +66,7 @@ def listing_operators():
 	if 0 == len(adress):
 		msg = "No address has been entered..."
 		return jsonify(message = msg)
-		
+
 	#get response from API search
 	response = requests.get(base_url_api_search + '?q=' + adress)
 
