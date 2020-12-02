@@ -1,7 +1,7 @@
 # Network-Coverage-API
  API that retrieves 2G / 3G / 4G network coverage for each operator for each given address
 
-1/ Install and start the app
+## 1/ Install and start the app
 
 - Clone the repo
 
@@ -54,7 +54,7 @@ The API should return:
 }
 
 
-2/ Brief explanation of how the application works::
+## 2/ Brief explanation of how the application works::
 
 When launching the run.py script and strictly before starting the server, the start () method
 is responsible for checking if the file "operator.csv" exists in api / data.
