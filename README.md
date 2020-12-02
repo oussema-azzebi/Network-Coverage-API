@@ -3,9 +3,13 @@
 
 1/ Install and start the app
 
-- Clone the project 
+- Clone the repo
 
-- Create virtual env:
+- Go inside the repo :
+
+		cd Network-Coverage-API/
+
+- Create and activate virtual env:
 
 		virtualenv env -p python3
 		source env/bin/activate
