@@ -3,7 +3,9 @@
 
 ## 1/ Install and start the app
 
-- Clone the repo
+- Clone the repo:
+
+		git clone https://github.com/oussema-azzebi/Network-Coverage-API.git
 
 - Go inside the repo :
 
@@ -14,15 +16,15 @@
 		virtualenv env -p python3
 		source env/bin/activate
 
-- Install dependencies
+- Install dependencies:
 
 		pip3 install -r requirements.txt
 
-- Run the server
+- Run the server:
 
 		python3 run.py
 
-- An example of using the API :
+- An example of using the API:
 
 GET: operator/?adress=1+avenue+claude+vellefaux+75010+paris
 
